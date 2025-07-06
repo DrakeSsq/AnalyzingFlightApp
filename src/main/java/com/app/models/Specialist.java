@@ -24,6 +24,10 @@ public class Specialist {
 
     private Map<Month, Double> monthlyHours = new HashMap<>();
 
+    private Map<Month, Boolean> monthlyHoursViolation = new HashMap<>();
+    private Map<Month, Boolean> weeklyHoursViolations = new HashMap<>();
+    private Map<Month, Boolean> dailyHoursViolation = new HashMap<>();
+
     public void addFlightTime(Month month, double hours) {
         if (monthlyHours.containsKey(month)) {
             monthlyHours.put(month, monthlyHours.get(month) + hours);

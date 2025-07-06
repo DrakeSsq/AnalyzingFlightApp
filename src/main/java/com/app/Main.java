@@ -29,7 +29,12 @@ public class Main {
 
             TimeService timeService = new TimeService(data);
             timeService.calculateTime();
-            data.getSpecialists().forEach(specialist -> System.out.println(specialist.getId() + " " + specialist.getMonthlyHours()));
+            data.getSpecialists().forEach(specialist ->
+                    System.out.println(specialist.getId() + " " +
+                            specialist.getMonthlyHours() + " " +
+                            specialist.getMonthlyHoursViolation() + " " +
+                            specialist.getWeeklyHoursViolations() + " " +
+                            specialist.getDailyHoursViolation()));
 
 
         }

@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="FlightAppReady:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/FlightAppReady_jar</output-path>
+  <artifact type="jar" name="FlightApp:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/FlightApp_jar</output-path>
     <root id="archive" name="FlightApp.jar">
       <element id="module-output" name="FlightApp" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.13.4.2/jackson-databind-2.13.4.2.jar" path-in-jar="/" />

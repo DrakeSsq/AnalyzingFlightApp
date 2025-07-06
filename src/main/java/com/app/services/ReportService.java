@@ -1,11 +1,9 @@
 package com.app.services;
 
-import com.app.models.AviationData;
 import com.app.models.Specialist;
 import com.app.models.reports.AviationReport;
 import com.app.models.reports.MonthlyReport;
 import com.app.models.reports.SpecialistReport;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.Month;
 import java.time.YearMonth;

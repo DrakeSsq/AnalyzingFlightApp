@@ -1,7 +1,7 @@
 package com.app.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.Data;
 
 import java.time.Month;
 import java.util.HashMap;

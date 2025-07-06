@@ -1,6 +1,6 @@
 package com.app.models;
 
-import lombok.*;
+import lombok.Data;
 
 import java.util.List;
 

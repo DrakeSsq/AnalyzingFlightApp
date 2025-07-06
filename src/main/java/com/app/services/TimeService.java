@@ -3,6 +3,7 @@ package com.app.services;
 import com.app.models.AviationData;
 import com.app.models.Flight;
 import com.app.models.Specialist;
+import lombok.Getter;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+@Getter
 public class TimeService {
     private final AviationData aviationData;
 
@@ -37,6 +39,7 @@ public class TimeService {
                 }
             }
 
+            checkWeeklyHoursViolation();
             checkMonthlyHoursViolation();
         }
     }
@@ -64,7 +67,7 @@ public class TimeService {
         }
     }
 
-    private void checkWeeklyViolation() {
+    private void checkWeeklyHoursViolation() {
         for (Specialist spec : aviationData.getSpecialists()) {
 
             Map<Month, Map<Integer, Double>> monthWeekHours = new HashMap<>();
@@ -113,11 +116,6 @@ public class TimeService {
 
     private int getWeekOfMonth(LocalDateTime date) {
         LocalDate localDate = date.toLocalDate();
-        int weekNumber = localDate.get(WeekFields.of(Locale.getDefault()).weekOfMonth());
-        return weekNumber;
-    }
-
-    public AviationData getAviationData() {
-        return aviationData;
+        return localDate.get(WeekFields.of(Locale.getDefault()).weekOfMonth());
     }
 }

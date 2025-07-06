@@ -1,0 +1,35 @@
+{
+  "aviation_report" : [ {
+    "id" : 101,
+    "name" : "Иванов Иван Иванович",
+    "monthly_report" : [ {
+      "period" : "2021-02",
+      "total_flight_time_hours" : 1.5,
+      "violation_flags" : [ ]
+    }, {
+      "period" : "2021-01",
+      "total_flight_time_hours" : 19.5,
+      "violation_flags" : [ "DAILY_LIMIT_EXCEEDED" ]
+    } ]
+  }, {
+    "id" : 102,
+    "name" : "Петров Петр Петрович",
+    "monthly_report" : [ {
+      "period" : "2021-02",
+      "total_flight_time_hours" : 1.5,
+      "violation_flags" : [ ]
+    }, {
+      "period" : "2021-01",
+      "total_flight_time_hours" : 9.0,
+      "violation_flags" : [ "DAILY_LIMIT_EXCEEDED" ]
+    } ]
+  }, {
+    "id" : 103,
+    "name" : "Сидоров Сидор Сидорович",
+    "monthly_report" : [ {
+      "period" : "2021-01",
+      "total_flight_time_hours" : 29.0,
+      "violation_flags" : [ "DAILY_LIMIT_EXCEEDED" ]
+    } ]
+  } ]
+}

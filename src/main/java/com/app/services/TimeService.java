@@ -116,4 +116,8 @@ public class TimeService {
         int weekNumber = localDate.get(WeekFields.of(Locale.getDefault()).weekOfMonth());
         return weekNumber;
     }
+
+    public AviationData getAviationData() {
+        return aviationData;
+    }
 }

@@ -1,22 +1,18 @@
 package com.app;
 
 import com.app.models.AviationData;
-import com.app.models.Flight;
+import com.app.models.reports.AviationReport;
+import com.app.services.ReportService;
 import com.app.services.TimeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.*;
-import java.time.Duration;
-import java.util.Scanner;
-
 public class Main {
     public static void main(String[] args) throws IOException {
-        Scanner scan = new Scanner(System.in);
 
-        File file = new File(scan.nextLine());
-
-        scan.close();
+        File file = new File(args[0]);
 
         if (!file.exists()) {
             throw new FileNotFoundException();
@@ -24,19 +20,17 @@ public class Main {
 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
             AviationData data = objectMapper.readValue(file, AviationData.class);
 
             TimeService timeService = new TimeService(data);
             timeService.calculateTime();
-            data.getSpecialists().forEach(specialist ->
-                    System.out.println(specialist.getId() + " " +
-                            specialist.getMonthlyHours() + " " +
-                            specialist.getMonthlyHoursViolation() + " " +
-                            specialist.getWeeklyHoursViolations() + " " +
-                            specialist.getDailyHoursViolation()));
 
+            ReportService reportService = new ReportService(timeService);
+            AviationReport aviationReport = reportService.generateReport();
 
+            objectMapper.writeValue(new File("output.json"), aviationReport);
         }
     }
 }

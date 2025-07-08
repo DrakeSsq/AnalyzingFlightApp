@@ -2,10 +2,13 @@ package com.app.models.reports;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class MonthlyReport {
     private String period;
 

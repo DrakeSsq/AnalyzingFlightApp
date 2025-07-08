@@ -1,13 +1,15 @@
 package com.app.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Month;
 import java.util.HashMap;
 import java.util.Map;
 
-@Data
+@Getter
+@Setter
 public class Specialist {
 
     @JsonProperty("id")
@@ -23,10 +25,6 @@ public class Specialist {
     private Map<Month, Boolean> dailyHoursViolation = new HashMap<>();
 
     public void addFlightTime(Month month, double hours) {
-        if (monthlyHours.containsKey(month)) {
-            monthlyHours.put(month, monthlyHours.get(month) + hours);
-        } else {
-            monthlyHours.put(month, hours);
-        }
+        monthlyHours.merge(month, hours, Double::sum);
     }
 }

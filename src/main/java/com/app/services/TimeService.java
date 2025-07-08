@@ -3,7 +3,6 @@ package com.app.services;
 import com.app.models.AviationData;
 import com.app.models.Flight;
 import com.app.models.Specialist;
-import lombok.Getter;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -14,37 +13,32 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-@Getter
 public class TimeService {
-    private final AviationData aviationData;
 
-    public TimeService(AviationData aviationData) {
-        this.aviationData = aviationData;
+    public void calculateTime(AviationData aviationData) {
+
+        aviationData.getFlights().forEach(flight -> {
+                 Duration duration = Duration.between(flight.getTakeoffTimeUtc(), flight.getLandingTimeUtc());
+
+                 double hours = duration.toMinutes() / 60.0;
+                 Month month = flight.getLandingTimeUtc().getMonth();
+                 updateSpecialistsFlightTime(flight, aviationData, month, hours);
+
+                 checkWeeklyHoursViolation(aviationData);
+                 checkMonthlyHoursViolation(aviationData);
+                });
     }
 
-    public void calculateTime() {
-        for (Flight flight : aviationData.getFlights()) {
-            Duration duration = Duration.between(flight.getTakeoffTimeUtc(), flight.getLandingTimeUtc());
-
-            double hours = duration.toMinutes() / 60.0;
-
-            Month month = flight.getLandingTimeUtc().getMonth();
-
-            for (Integer specialistId : flight.getCrew()) {
-                Specialist specialist = findSpecialistById(specialistId);
-                if (specialist!=null) {
+    private void updateSpecialistsFlightTime(Flight flight, AviationData aviationData, Month month, double hours) {
+        flight.getCrew().stream()
+                .map(specialistId -> findSpecialistById(specialistId, aviationData))
+                .forEach(specialist -> {
                     specialist.addFlightTime(month, hours);
-
                     checkDailyViolation(specialist, month, hours);
-                }
-            }
-
-            checkWeeklyHoursViolation();
-            checkMonthlyHoursViolation();
-        }
+                });
     }
 
-    private Specialist findSpecialistById(Integer specialistId) {
+    private Specialist findSpecialistById(Integer specialistId, AviationData aviationData) {
         return aviationData.getSpecialists()
                 .stream()
                 .filter(s -> s.getId().equals(specialistId))
@@ -52,44 +46,34 @@ public class TimeService {
                 .orElse(null);
     }
 
-    private void checkMonthlyHoursViolation() {
-        for (Specialist spec : aviationData.getSpecialists()) {
+    private void checkMonthlyHoursViolation(AviationData aviationData) {
+        aviationData.getSpecialists()
+                .forEach(specialist ->
+                        specialist.getMonthlyHours().entrySet().stream()
+                .filter(entry -> entry.getValue()>80)
+                        .forEach(entry ->
+                                specialist.getMonthlyHoursViolation().put(entry.getKey(), true)));
 
-            for (Map.Entry<Month, Double> entry : spec.getMonthlyHours().entrySet()) {
-                Month month = entry.getKey();
-                double hours = entry.getValue();
-
-                if (hours > 80) {
-                    spec.getMonthlyHoursViolation().put(month, true);
-                }
-            }
-
-        }
     }
 
-    private void checkWeeklyHoursViolation() {
+    private void checkWeeklyHoursViolation(AviationData aviationData) {
         for (Specialist spec : aviationData.getSpecialists()) {
 
             Map<Month, Map<Integer, Double>> monthWeekHours = new HashMap<>();
 
-            for (Flight flight : aviationData.getFlights()) {
+            aviationData.getFlights().stream()
+                    .filter(flight -> flight.getCrew().contains(spec.getId()))
+                    .forEach(flight -> {
+                        LocalDateTime takeOff = flight.getTakeoffTimeUtc();
 
-                if (flight.getCrew().contains(spec.getId())) {
+                        Month month = takeOff.getMonth();
+                        int weekNumber = getWeekOfMonth(takeOff);
+                        double hours = calculateFlightHours(flight);
 
-                    LocalDateTime takeOff = flight.getTakeoffTimeUtc();
-
-                    Month month = takeOff.getMonth();
-
-                    int weekNumber = getWeekOfMonth(takeOff);
-                    double hours = calculateFlightHours(flight);
-
-                    monthWeekHours
-                            .computeIfAbsent(month, k -> new HashMap<>())
-                            .merge(weekNumber, hours, Double::sum);
-
-
-                }
-            }
+                        monthWeekHours
+                                .computeIfAbsent(month, k -> new HashMap<>())
+                                .merge(weekNumber, hours, Double::sum);
+                    });
 
             for (Map.Entry<Month, Map<Integer, Double>> monthEntry : monthWeekHours.entrySet()) {
                 boolean hasViolation = monthEntry.getValue().values()
